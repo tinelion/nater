@@ -19,14 +19,15 @@ public class ClientChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        if (msg instanceof DefaultHttpRequest) {
-            HttpRequest request = (DefaultHttpRequest)msg;
-            ctx.pipeline().writeAndFlush(new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
-                    Unpooled.copiedBuffer("hehe", Charset.forName("utf8")), request.headers(), request.headers()));
-        } else {
-            System.out.println("丢弃消息");
-            ctx.writeAndFlush(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
-        }
+        ctx.pipeline().channel().writeAndFlush(Unpooled.copiedBuffer("hello", Charset.forName("utf8")));
+//        if (msg instanceof DefaultHttpRequest) {
+//            HttpRequest request = (DefaultHttpRequest)msg;
+//            ctx.pipeline().writeAndFlush(new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
+//                    Unpooled.copiedBuffer("hehe", Charset.forName("utf8")), request.headers(), request.headers()));
+//        } else {
+//            System.out.println("丢弃消息");
+//            ctx.writeAndFlush(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
+//        }
     }
 
     @Override

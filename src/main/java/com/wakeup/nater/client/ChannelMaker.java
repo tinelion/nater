@@ -19,7 +19,7 @@ import java.util.List;
  * @Date 2019/5/31 22:56
  */
 @Component
-public class RequestBootStrap {
+public class ChannelMaker {
     private List<Channel> channels = new ArrayList<Channel>();
     private static final String KEY = "hello";
     private Bootstrap startPoint;
@@ -28,7 +28,7 @@ public class RequestBootStrap {
     private ClientChannelHandler clientChannelHandler;
 
 
-    public int bootstrap() {
+    public int make() {
         for (int i = 0; i < 3; i++) {
             buildConnection();
         }
@@ -76,8 +76,8 @@ public class RequestBootStrap {
 
 
     public void initChannel(ChannelPipeline pipeline) {
-        pipeline.addLast("encoder", new HttpResponseEncoder());
-        pipeline.addLast("decoder", new HttpRequestDecoder());
+//        pipeline.addLast("encoder", new HttpResponseEncoder());
+//        pipeline.addLast("decoder", new HttpRequestDecoder());
         pipeline.addLast(new ClientChannelHandler());
 
     }

@@ -8,7 +8,7 @@ import io.netty.channel.ChannelInitializer;
  * @Author Alon
  * @Date 2019/6/18 22:23
  */
-public class NullChannelHandlerInitializer extends ChannelInitializer {
+public class EmptyChannelHandlerInitializer extends ChannelInitializer {
 
     protected void initChannel(Channel ch) throws Exception {
 

@@ -5,6 +5,8 @@ import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,7 @@ import java.util.concurrent.Executors;
  */
 @Component
 public class BusyMan implements Runnable {
+    private static Logger logger = LoggerFactory.getLogger(BusyMan.class);
     private static final String REQUEST_ID = "requestId";
     private Queue<HttpRequest> requests = new ConcurrentLinkedQueue<HttpRequest>();
     private Queue<HttpResponse> responses = new ConcurrentLinkedQueue<HttpResponse>();
@@ -61,7 +64,7 @@ public class BusyMan implements Runnable {
         return promise;
     }
 
-    public void putResponse(HttpResponse response){
+    public void putResponse(HttpResponse response) {
         responses.offer(response);
     }
 
@@ -100,8 +103,14 @@ public class BusyMan implements Runnable {
             try {
                 Channel channel = channelManager.getChannelInBalance();
 
-                if ((channel != null) && (request = requests.poll()) != null) {
-                    channel.writeAndFlush(request);
+                if ((request = requests.poll()) != null) {
+                    if (channel != null) {
+                        logger.info(String.format("Channel %s 可用",channel.toString()));
+                        channel.writeAndFlush(request);
+                    } else {
+                        Thread.sleep(3000);
+                        logger.info("没有可用的channel");
+                    }
                 }
 
                 //进一个请求尝试出两个响应，防止响应堆积

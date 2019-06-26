@@ -20,7 +20,7 @@ import static io.netty.util.CharsetUtil.UTF_8;
  * @Author Alon
  * @Date 2019/5/31 22:35
  */
-
+@io.netty.channel.ChannelHandler.Sharable
 public class LauncherChannelHandler extends ChannelInboundHandlerAdapter {
     private static Logger logger = LoggerFactory.getLogger(LauncherChannelHandler.class);
     private static final String KEY = "hello";
@@ -87,7 +87,13 @@ public class LauncherChannelHandler extends ChannelInboundHandlerAdapter {
 
 
     private void onResponse(ChannelHandlerContext ctx, Object msg) {
-        busyMan.putResponse((HttpResponse) msg);
+        try {
+           // busyMan.putResponse((HttpResponse) msg);
+            logger.info(msg.toString());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 

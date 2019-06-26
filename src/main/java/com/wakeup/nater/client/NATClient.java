@@ -7,6 +7,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +22,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Component(value = "client")
 public class NATClient implements IService {
+    private static Logger logger = LoggerFactory.getLogger(NATClient.class);
     private static AtomicBoolean stop = new AtomicBoolean(false);
     private int serverPort;
     private String serverHost;
 
     @Autowired
-    private RequestBootStrap requestBootStrap;
+    private ChannelMaker channelMaker;
 
     public boolean init(CommandReader.Info info) {
         this.serverPort = info.getNatPort();
@@ -43,13 +46,11 @@ public class NATClient implements IService {
         bootstrap.group(executors)
                 .channel(NioSocketChannel.class)
                 .remoteAddress(new InetSocketAddress(serverHost, serverPort))
-                .handler(new NullChannelHandlerInitializer());
+                .handler(new EmptyChannelHandlerInitializer());
 
-        requestBootStrap = new RequestBootStrap();
-        requestBootStrap.setStartPoint(bootstrap);
-
-        requestBootStrap.bootstrap();
-        System.out.println("客户端启动完成!");
+        channelMaker.setStartPoint(bootstrap);
+        channelMaker.make();
+        logger.debug("客户端启动完成!");
         this.sync();
     }
 
